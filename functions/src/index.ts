@@ -1,7 +1,9 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-admin.initializeApp();
+admin.initializeApp({
+  storageBucket: "demo-tiny-cms.appspot.com"
+});
 
 export const publishSite = functions.https.onCall(async (data, context) => {
   // Require auth
@@ -13,7 +15,6 @@ export const publishSite = functions.https.onCall(async (data, context) => {
   }
 
   try {
-    const db = admin.firestore();
     const storage = admin.storage();
     const bucket = storage.bucket();
 
@@ -35,6 +36,6 @@ export const publishSite = functions.https.onCall(async (data, context) => {
     return { success: true, message: "Site published successfully." };
   } catch (error: any) {
     console.error("Error publishing site:", error);
-    throw new functions.https.HttpsError("internal", error.message);
+    throw new functions.https.HttpsError("unknown", "Full Error: " + (error.stack || error.toString()));
   }
 });

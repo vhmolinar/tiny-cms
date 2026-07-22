@@ -50,7 +50,11 @@ test.describe('Tiny CMS Smoke Tests', () => {
     await publishBtn.click();
 
     // Wait for the success message (meaning the HTTP Cloud Function returned successfully)
-    await expect(page.getByText('Site published successfully!')).toBeVisible({ timeout: 10000 });
+    const messageContainer = page.locator('.mb-6.p-4');
+    await expect(messageContainer).toBeVisible({ timeout: 10000 });
+    const text = await messageContainer.textContent();
+    console.log("PUBLISH RESULT MESSAGE: ", text);
+    expect(text).toContain('Site published successfully!');
   });
 
 });

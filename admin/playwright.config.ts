@@ -6,8 +6,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  globalSetup: require.resolve('./e2e/global-setup'),
+  reporter: [['html', { open: 'never' }]],
+  globalSetup: './e2e/global-setup.ts',
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
