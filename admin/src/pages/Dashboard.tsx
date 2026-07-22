@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { auth, functions } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { useNavigate } from 'react-router-dom';
-import { LogOut, Rocket, FileText, Settings, LayoutDashboard } from 'lucide-react';
+import { useNavigate, Link, Outlet, useLocation } from 'react-router-dom';
+import { LogOut, Rocket, FileText, LayoutDashboard } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [publishing, setPublishing] = useState(false);
   const [publishMessage, setPublishMessage] = useState('');
 
@@ -31,22 +32,18 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
-      {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
         <div className="p-6 border-b border-gray-100 flex items-center">
           <Rocket className="w-6 h-6 text-blue-600 mr-3" />
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Tiny CMS</h1>
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <a href="#" className="flex items-center px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg font-medium transition-colors">
+          <Link to="/" className={`flex items-center px-4 py-2.5 rounded-lg font-medium transition-colors ${location.pathname === '/' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
             <LayoutDashboard className="w-5 h-5 mr-3" /> Dashboard
-          </a>
-          <a href="#" className="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
+          </Link>
+          <Link to="/posts" className={`flex items-center px-4 py-2.5 rounded-lg font-medium transition-colors ${location.pathname === '/posts' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
             <FileText className="w-5 h-5 mr-3" /> Posts
-          </a>
-          <a href="#" className="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-            <Settings className="w-5 h-5 mr-3" /> Settings
-          </a>
+          </Link>
         </nav>
         <div className="p-4 border-t border-gray-100">
           <button
@@ -58,11 +55,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white shadow-sm z-10">
           <div className="max-w-7xl mx-auto py-4 px-8 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800">Overview</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {location.pathname === '/posts' ? 'Posts' : 'Overview'}
+            </h2>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-500">{auth.currentUser?.email}</span>
               <button
@@ -83,23 +81,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Total Posts</h3>
-                <div className="p-2 bg-blue-50 rounded-lg"><FileText className="w-5 h-5 text-blue-600" /></div>
-              </div>
-              <p className="text-3xl font-bold text-gray-900">0</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Status</h3>
-                <div className="p-2 bg-green-50 rounded-lg"><Rocket className="w-5 h-5 text-green-600" /></div>
-              </div>
-              <p className="text-3xl font-bold text-gray-900">All systems go</p>
-            </div>
-          </div>
+          <Outlet />
         </main>
       </div>
     </div>
