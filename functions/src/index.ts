@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
 admin.initializeApp({
-  storageBucket: "cms-gf-udi.appspot.com"
+  storageBucket: "cms-gf-udi.firebasestorage.app"
 });
 
 export const publishSite = functions.https.onCall(async (data, context) => {
