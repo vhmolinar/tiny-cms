@@ -12,7 +12,14 @@ test.describe('Tiny CMS Smoke Tests', () => {
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
-    // 3. Verify successful navigation to Dashboard Overview
+    // 3. Navigate to Create Site
+    await expect(page.getByRole('heading', { name: 'Create Your First Site' })).toBeVisible();
+
+    // 4. Create Site
+    await page.fill('input[name="name"]', 'My Automated Site');
+    await page.click('button[type="submit"]');
+
+    // 5. Verify successful navigation to Dashboard Overview
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
     await expect(page.getByText('All systems go')).toBeVisible();
   });
@@ -24,6 +31,16 @@ test.describe('Tiny CMS Smoke Tests', () => {
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
+    // Assuming site is already created by first test, but Playwright tests can run out of order or isolated.
+    // In our config, they share the same backend, so the site might exist, or might not.
+    // To be safe, wait for either Overview or Create Site
+    await page.waitForURL('**/');
+    const isCreateSite = await page.getByRole('heading', { name: 'Create Your First Site' }).isVisible();
+    if (isCreateSite) {
+      await page.fill('input[name="name"]', 'My Automated Site');
+      await page.click('button[type="submit"]');
+    }
+    
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
 
     // Navigate to Posts
@@ -42,6 +59,13 @@ test.describe('Tiny CMS Smoke Tests', () => {
     await page.fill('input[type="email"]', 'admin@test.com');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
+    await page.waitForURL('**/');
+    const isCreateSite = await page.getByRole('heading', { name: 'Create Your First Site' }).isVisible();
+    if (isCreateSite) {
+      await page.fill('input[name="name"]', 'My Automated Site');
+      await page.click('button[type="submit"]');
+    }
+
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
 
     // Click Publish

@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Overview from './pages/Overview';
 import Posts from './pages/Posts';
+import CreateSite from './pages/CreateSite';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -25,6 +26,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/create-site" element={user ? <CreateSite /> : <Navigate to="/login" />} />
         <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />}>
           <Route index element={<Overview />} />
           <Route path="posts" element={<Posts />} />

@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
-import { auth, functions } from '../firebase';
+import React, { useState, useEffect } from 'react';
+import { auth, functions, db } from '../firebase';
 import { signOut } from 'firebase/auth';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { useNavigate, Link, Outlet, useLocation } from 'react-router-dom';
-import { LogOut, Rocket, FileText, LayoutDashboard } from 'lucide-react';
+import { LogOut, Rocket, FileText, LayoutDashboard, ChevronDown } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [publishing, setPublishing] = useState(false);
   const [publishMessage, setPublishMessage] = useState('');
+  
+  const [sites, setSites] = useState<any[]>([]);
+  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+  const [loadingSites, setLoadingSites] = useState(true);
+
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const q = query(collection(db, 'sites'), where('ownerId', '==', auth.currentUser.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedSites = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSites(fetchedSites);
+      
+      if (fetchedSites.length === 0) {
+        navigate('/create-site');
+      } else if (!activeSiteId && fetchedSites.length > 0) {
+        setActiveSiteId(fetchedSites[0].id);
+      }
+      setLoadingSites(false);
+    });
+    return () => unsubscribe();
+  }, [auth.currentUser, navigate]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -17,11 +39,12 @@ export default function Dashboard() {
   };
 
   const handlePublish = async () => {
+    if (!activeSiteId) return;
     setPublishing(true);
     setPublishMessage('');
     try {
       const publishSite = httpsCallable(functions, 'publishSite');
-      const result = await publishSite();
+      const result = await publishSite({ siteId: activeSiteId });
       setPublishMessage((result.data as any).message || 'Site published successfully!');
     } catch (error: any) {
       setPublishMessage(`Error: ${error.message}`);
@@ -30,12 +53,26 @@ export default function Dashboard() {
     }
   };
 
+  if (loadingSites) {
+    return <div className="h-screen flex items-center justify-center bg-gray-50">Loading workspace...</div>;
+  }
+
+  const activeSite = sites.find(s => s.id === activeSiteId);
+
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
-        <div className="p-6 border-b border-gray-100 flex items-center">
-          <Rocket className="w-6 h-6 text-blue-600 mr-3" />
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Tiny CMS</h1>
+        <div className="p-6 border-b border-gray-100 flex flex-col">
+          <div className="flex items-center mb-4">
+            <Rocket className="w-6 h-6 text-blue-600 mr-3" />
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">Tiny CMS</h1>
+          </div>
+          {activeSite && (
+            <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors">
+              <span className="text-sm font-medium text-gray-800 truncate">{activeSite.name}</span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </div>
+          )}
         </div>
         <nav className="flex-1 p-4 space-y-2">
           <Link to="/" className={`flex items-center px-4 py-2.5 rounded-lg font-medium transition-colors ${location.pathname === '/' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
