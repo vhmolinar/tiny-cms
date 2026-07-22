@@ -12,28 +12,54 @@
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
+Error: expect(received).toContain(expected) // indexOf
 
-Locator: getByRole('heading', { name: 'Overview' })
-Expected: visible
-Timeout: 5000ms
-Error: element(s) not found
-
-Call log:
-  - Expect "toBeVisible" with timeout 5000ms
-  - waiting for getByRole('heading', { name: 'Overview' })
-
+Expected substring: "Site published successfully!"
+Received string:    "Site published successfully."
 ```
 
+# Page snapshot
+
 ```yaml
-- heading "Sign in to Tiny CMS" [level=2]
-- text: Email address
-- textbox: admin@test.com
-- text: Password
-- textbox: password123
-- text: "Firebase: Error (auth/network-request-failed)."
-- button "Sign in"
-- paragraph: Running in emulator mode. Do not use with production credentials.
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - heading "Tiny CMS" [level=1] [ref=e11]
+      - navigation [ref=e12]:
+        - link "Dashboard" [ref=e13] [cursor=pointer]:
+          - /url: /
+          - img [ref=e14]
+          - text: Dashboard
+        - link "Posts" [ref=e19] [cursor=pointer]:
+          - /url: /posts
+          - img [ref=e20]
+          - text: Posts
+      - button "Logout" [ref=e24] [cursor=pointer]:
+        - img [ref=e25]
+        - text: Logout
+    - generic [ref=e28]:
+      - banner [ref=e29]:
+        - generic [ref=e30]:
+          - heading "Overview" [level=2] [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: admin@test.com
+            - button "Publish Site" [ref=e34] [cursor=pointer]
+      - main [ref=e35]:
+        - generic [ref=e36]: Site published successfully.
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - heading "Total Posts" [level=3] [ref=e40]
+              - img [ref=e42]
+            - paragraph [ref=e45]: "0"
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - heading "Status" [level=3] [ref=e48]
+              - img [ref=e50]
+            - paragraph [ref=e55]: All systems go
+  - paragraph [ref=e56]: Running in emulator mode. Do not use with production credentials.
 ```
 
 # Test source
@@ -83,8 +109,7 @@ Call log:
   42 |     await page.fill('input[type="email"]', 'admin@test.com');
   43 |     await page.fill('input[type="password"]', 'password123');
   44 |     await page.click('button[type="submit"]');
-> 45 |     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
-     |                                                                   ^ Error: expect(locator).toBeVisible() failed
+  45 |     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
   46 | 
   47 |     // Click Publish
   48 |     const publishBtn = page.getByRole('button', { name: /Publish Site/i });
@@ -96,7 +121,8 @@ Call log:
   54 |     await expect(messageContainer).toBeVisible({ timeout: 10000 });
   55 |     const text = await messageContainer.textContent();
   56 |     console.log("PUBLISH RESULT MESSAGE: ", text);
-  57 |     expect(text).toContain('Site published successfully!');
+> 57 |     expect(text).toContain('Site published successfully!');
+     |                  ^ Error: expect(received).toContain(expected) // indexOf
   58 |   });
   59 | 
   60 | });

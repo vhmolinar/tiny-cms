@@ -29,8 +29,7 @@ export const publishSite = functions.https.onCall(async (data, context) => {
 
     const file = bucket.file("site-data.json");
     await file.save(JSON.stringify(siteData, null, 2), {
-      contentType: "application/json",
-      public: true // For simple access in MVP
+      contentType: "application/json"
     });
 
     return { success: true, message: "Site published successfully." };
