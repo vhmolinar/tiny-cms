@@ -5,10 +5,10 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 
 const firebaseConfig = {
-  projectId: "demo-tiny-cms",
-  apiKey: "demo-api-key",
-  authDomain: "demo-tiny-cms.firebaseapp.com",
-  storageBucket: "demo-tiny-cms.appspot.com",
+  projectId: "cms-gf-udi",
+  apiKey: "demo-api-key", // You'll need to update this with your real API key for production
+  authDomain: "cms-gf-udi.firebaseapp.com",
+  storageBucket: "cms-gf-udi.appspot.com",
 };
 
 const app = initializeApp(firebaseConfig);

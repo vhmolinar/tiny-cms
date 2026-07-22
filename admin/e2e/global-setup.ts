@@ -8,7 +8,7 @@ async function globalSetup() {
   
   let app;
   if (getApps().length === 0) {
-    app = initializeApp({ projectId: 'demo-tiny-cms' });
+    app = initializeApp({ projectId: 'cms-gf-udi' });
   } else {
     app = getApps()[0];
   }
