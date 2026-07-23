@@ -26,13 +26,30 @@ test.describe('Tiny CMS User Journey', () => {
     // 5. Sidebar Navigation: Posts
     await page.click('a:has-text("Posts")');
     await expect(page.getByRole('heading', { name: 'Posts' })).toBeVisible();
-    await expect(page.getByText('Posts management coming soon...')).toBeVisible();
 
-    // 6. Sidebar Navigation: Back to Dashboard
+    // 6. Create a new Post
+    await page.click('text=New Post');
+    await expect(page.getByRole('heading', { name: 'Create Post' })).toBeVisible();
+
+    // Fill Post form
+    await page.fill('input[placeholder="My Awesome Post"]', 'My First Post');
+    await page.fill('input[placeholder="my-awesome-post"]', 'my-first-post');
+    await page.selectOption('select', 'published');
+    await page.fill('textarea', '# Hello World\nThis is the content');
+    
+    // Save Post
+    await page.click('button:has-text("Save Post")');
+    
+    // Should return to Posts list and see the new post
+    await expect(page.getByRole('heading', { name: 'Posts' })).toBeVisible();
+    await expect(page.getByText('My First Post')).toBeVisible();
+    await expect(page.getByText('/my-first-post')).toBeVisible();
+
+    // 7. Sidebar Navigation: Back to Dashboard
     await page.click('a:has-text("Dashboard")');
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
 
-    // 7. Publish Site
+    // 8. Publish Site
     const publishBtn = page.getByRole('button', { name: /Publish Site/i });
     await expect(publishBtn).toBeVisible();
     await publishBtn.click();

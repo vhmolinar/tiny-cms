@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Overview from './pages/Overview';
 import Posts from './pages/Posts';
+import PostEditor from './pages/PostEditor';
 import CreateSite from './pages/CreateSite';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />}>
           <Route index element={<Overview />} />
           <Route path="posts" element={<Posts />} />
+          <Route path="posts/:postId" element={<PostEditor />} />
         </Route>
       </Routes>
     </Router>

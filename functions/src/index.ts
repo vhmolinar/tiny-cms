@@ -34,11 +34,27 @@ export const publishSite = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("permission-denied", "You do not own this site.");
     }
 
+    // Fetch published posts
+    const postsSnapshot = await db.collection("sites").doc(siteId).collection("posts")
+      .where("status", "==", "published")
+      .get();
+      
+    const posts = postsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        slug: data.slug,
+        content: data.content,
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString() || null
+      };
+    });
+
     const siteData = {
       siteName: siteDataInfo?.name || "Tiny CMS Site",
       publishedAt: new Date().toISOString(),
       message: "Hello from Tiny CMS!",
-      posts: [],
+      posts,
       categories: []
     };
 

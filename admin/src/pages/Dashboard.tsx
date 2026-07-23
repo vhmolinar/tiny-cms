@@ -118,7 +118,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          <Outlet />
+          <Outlet context={{ activeSiteId }} />
         </main>
       </div>
     </div>
