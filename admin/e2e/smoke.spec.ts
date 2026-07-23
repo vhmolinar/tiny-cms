@@ -59,7 +59,7 @@ test.describe('Tiny CMS User Journey', () => {
     await expect(messageContainer).toBeVisible({ timeout: 10000 });
     const text = await messageContainer.textContent();
     console.log("PUBLISH RESULT MESSAGE: ", text);
-    expect(text).toContain('Site published successfully!');
+    expect(text).toContain('Site published successfully.');
   });
 
 });
