@@ -13,6 +13,14 @@ async function globalSetup() {
     app = getApps()[0];
   }
 
+  // Clear Firestore to ensure a completely fresh state for onboarding flow
+  try {
+    await fetch('http://127.0.0.1:8080/emulator/v1/projects/cms-gf-udi/databases/(default)/documents', { method: 'DELETE' });
+    console.log('✅ E2E global setup: Firestore emulator state cleared.');
+  } catch (error) {
+    console.error('⚠️ E2E global setup: Failed to clear Firestore state', error);
+  }
+
   let retries = 5;
   while (retries > 0) {
     try {
